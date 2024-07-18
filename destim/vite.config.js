@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import { crx } from '@crxjs/vite-plugin'
 import manifest from './src/manifest.js'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
     build: {
@@ -16,5 +15,13 @@ export default defineConfig(({ mode }) => {
     },
 
     plugins: [crx({ manifest })],
+
+    server: {
+      host: '0.0.0.0',
+      port: 5173,
+      hmr: {
+        clientPort: 5173
+      }
+    }
   }
 })
