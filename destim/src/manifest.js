@@ -18,7 +18,11 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_icon: 'img/logo-48.png',
   },
-  permissions: ['storage', 'activeTab'],
+  permissions: ['activeTab'],
+  host_permissions: [
+    "http://localhost:5173/*",
+    "http://127.0.0.1:5173/*"
+  ],
   content_scripts: [
     {
       matches: ['http://*/*', 'https://*/*'],
