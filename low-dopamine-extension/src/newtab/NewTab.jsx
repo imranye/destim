@@ -1,58 +1,59 @@
 import { useState, useEffect } from 'react'
 import './NewTab.css'
-const applyGrayscale = () => {
-  if (isGrayscale) {
-    document.documentElement.style.filter = 'grayscale(100%)';
-  } else if (isHalfGrayscale) {
-    document.documentElement.style.filter = 'grayscale(50%)';
-  } else {
-    document.documentElement.style.filter = 'none';
-  }
 
-};
 export const NewTab = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
   const [isHalfGrayscale, setIsHalfGrayscale] = useState(false)
   const [error, setError] = useState(null)
 
-   const sendMessageToContentScript = (action) => {
+  const applyGrayscale = () => {
+    if (isGrayscale) {
+      document.documentElement.style.filter = 'grayscale(100%)'
+    } else if (isHalfGrayscale) {
+      document.documentElement.style.filter = 'grayscale(50%)'
+    } else {
+      document.documentElement.style.filter = 'none'
+    }
+  }
+
+  const sendMessageToContentScript = (action) => {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action }, (response) => {
         if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError.message);
+          reject(chrome.runtime.lastError.message)
         } else {
-          resolve(response);
+          resolve(response)
         }
-      });
-    });
-  };
+      })
+    })
+  }
+
   const toggleGrayscale = async () => {
-    setIsGrayscale(!isGrayscale);
-    setIsHalfGrayscale(false);
-    applyGrayscale();
+    setIsGrayscale(!isGrayscale)
+    setIsHalfGrayscale(false)
+    applyGrayscale()
     try {
-      await sendMessageToContentScript('toggleGrayscale');
+      await sendMessageToContentScript('toggleGrayscale')
     } catch (err) {
-      setError(err);
+      setError(err)
     }
-  };
-  
+  }
+
   const toggleHalfGrayscale = async () => {
-    setIsHalfGrayscale(!isHalfGrayscale);
-    setIsGrayscale(false);
-    applyGrayscale();
+    setIsHalfGrayscale(!isHalfGrayscale)
+    setIsGrayscale(false)
+    applyGrayscale()
     try {
-      await sendMessageToContentScript('toggleHalfGrayscale');
+      await sendMessageToContentScript('toggleHalfGrayscale')
     } catch (err) {
-      setError(err);
+      setError(err)
     }
-  };
+  }
 
   useEffect(() => {
-    applyGrayscale();
-  }, [isGrayscale, isHalfGrayscale]);
+    applyGrayscale()
+  }, [isGrayscale, isHalfGrayscale])
 
-  
   useEffect(() => {
     const getInitialState = async () => {
       try {
