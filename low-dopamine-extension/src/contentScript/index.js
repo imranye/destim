@@ -20,14 +20,15 @@ function toggleGrayscale() {
     isGrayscale = !isGrayscale
     applyGrayscale(isGrayscale)
     chrome.storage.local.set({ isGrayscale: isGrayscale })
+    return isGrayscale
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'toggleGrayscale') {
-        toggleGrayscale()
-        sendResponse({ isGrayscale })
+        const newState = toggleGrayscale()
+        sendResponse({ isGrayscale: newState })
     } else if (request.action === 'getGrayscaleStatus') {
-        sendResponse({ isGrayscale })
+        sendResponse({ isGrayscale: isGrayscale })
     }
     return true
 })

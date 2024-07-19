@@ -11,7 +11,9 @@ export const Popup = () => {
           console.error(chrome.runtime.lastError)
           return
         }
-        setIsGrayscale(response.isGrayscale)
+        if (response && response.isGrayscale !== undefined) {
+          setIsGrayscale(response.isGrayscale)
+        }
       })
     })
   }
@@ -23,7 +25,9 @@ export const Popup = () => {
           console.error(chrome.runtime.lastError)
           return
         }
-        setIsGrayscale(response.isGrayscale)
+        if (response && response.isGrayscale !== undefined) {
+          setIsGrayscale(response.isGrayscale)
+        }
       })
     })
   }, [])
