@@ -3,6 +3,7 @@ import './Popup.css'
 
 export const Popup = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
+  const [isHalfGrayscale, setIsHalfGrayscale] = useState(false)
   const [error, setError] = useState(null)
 
   const sendMessageToContentScript = (action) => {
@@ -28,16 +29,20 @@ export const Popup = () => {
       const response = await sendMessageToContentScript('toggleGrayscale')
       if (response && response.isGrayscale !== undefined) {
         setIsGrayscale(response.isGrayscale)
+        setIsHalfGrayscale(false)
       }
     } catch (err) {
       setError(err)
     }
   }
 
-  const setHalfGrayscale = async () => {
+  const toggleHalfGrayscale = async () => {
     try {
-      await sendMessageToContentScript('setHalfGrayscale')
-      setIsGrayscale(true)
+      const response = await sendMessageToContentScript('toggleHalfGrayscale')
+      if (response && response.isHalfGrayscale !== undefined) {
+        setIsHalfGrayscale(response.isHalfGrayscale)
+        setIsGrayscale(false)
+      }
     } catch (err) {
       setError(err)
     }
@@ -50,6 +55,9 @@ export const Popup = () => {
         if (response && response.isGrayscale !== undefined) {
           setIsGrayscale(response.isGrayscale)
         }
+        if (response && response.isHalfGrayscale !== undefined) {
+          setIsHalfGrayscale(response.isHalfGrayscale)
+        }
       } catch (err) {
         setError(err)
       }
@@ -60,16 +68,25 @@ export const Popup = () => {
   return (
     <main>
       <h3>Low Dopamine Extension</h3>
-      <button onClick={toggleGrayscale}>
-        {isGrayscale ? 'Disable Grayscale' : 'Enable Grayscale'}
-      </button>
-      <button onClick={setHalfGrayscale}>
-        Set 50% Grayscale
-      </button>
+      <label>
+        <input
+          type="checkbox"
+          checked={isGrayscale}
+          onChange={toggleGrayscale}
+        />
+        Enable Grayscale
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={isHalfGrayscale}
+          onChange={toggleHalfGrayscale}
+        />
+        Enable 50% Grayscale
+      </label>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </main>
   )
 }
-
 
 export default Popup
