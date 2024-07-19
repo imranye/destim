@@ -34,6 +34,15 @@ export const Popup = () => {
     }
   }
 
+  const setHalfGrayscale = async () => {
+    try {
+      await sendMessageToContentScript('setHalfGrayscale')
+      setIsGrayscale(true)
+    } catch (err) {
+      setError(err)
+    }
+  }
+
   useEffect(() => {
     const getInitialState = async () => {
       try {
@@ -53,6 +62,9 @@ export const Popup = () => {
       <h3>Low Dopamine Extension</h3>
       <button onClick={toggleGrayscale}>
         {isGrayscale ? 'Disable Grayscale' : 'Enable Grayscale'}
+      </button>
+      <button onClick={setHalfGrayscale}>
+        Set 50% Grayscale
       </button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </main>
