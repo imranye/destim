@@ -4,14 +4,13 @@ section::before {
   z-index: -1;
   width: 100vw;
   height: 100vh;
-  background-image: url('https://source.unsplash.com/random');
-  background-size: cover;
-  filter: blur(10px);
+  background-color: black;
 }
 
 section {
   width: 100vw;
   height: 100vh;
+  background-color: black;
 
   display: flex;
   flex-direction: column;
@@ -20,8 +19,8 @@ section {
 }
 
 h1 {
-  color: #61dafb;
-  text-transform: uppercase;
+  color: white;
+  /* text-transform: uppercase; */
   font-size: 6rem;
   margin: 2rem auto;
 }
@@ -29,6 +28,6 @@ h1 {
 a {
   font-size: 0.5rem;
   margin: 0.5rem;
-  color: #cccccc;
+  color: white;
   text-decoration: none;
 }
