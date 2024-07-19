@@ -2,8 +2,6 @@ console.info('contentScript is running')
 
 let isGrayscale = false
 
-
-
 function injectCSS() {
     const style = document.createElement('style')
     style.textContent = `
@@ -14,22 +12,29 @@ function injectCSS() {
     document.head.appendChild(style)
 }
 
+function applyGrayscale(value) {
+    document.documentElement.style.filter = value ? 'grayscale(100%)' : 'none'
+}
+
 function toggleGrayscale() {
-  isGrayscale = !isGrayscale
-  if (isGrayscale) {
-    document.documentElement.style.filter = 'grayscale(100%)'
-  } else {
-    document.documentElement.style.filter = 'none'
-  }
+    isGrayscale = !isGrayscale
+    applyGrayscale(isGrayscale)
+    chrome.storage.local.set({ isGrayscale: isGrayscale })
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'toggleGrayscale') {
-    toggleGrayscale()
-  } else if (request.action === 'getGrayscaleStatus') {
-    sendResponse({ isGrayscale })
-  }
-  return true
+    if (request.action === 'toggleGrayscale') {
+        toggleGrayscale()
+        sendResponse({ isGrayscale })
+    } else if (request.action === 'getGrayscaleStatus') {
+        sendResponse({ isGrayscale })
+    }
+    return true
+})
+
+chrome.storage.local.get(['isGrayscale'], (result) => {
+    isGrayscale = result.isGrayscale || false
+    applyGrayscale(isGrayscale)
 })
 
 injectCSS()

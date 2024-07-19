@@ -5,15 +5,24 @@ export const Popup = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
 
   const toggleGrayscale = () => {
-    setIsGrayscale(!isGrayscale)
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleGrayscale' })
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleGrayscale' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError)
+          return
+        }
+        setIsGrayscale(response.isGrayscale)
+      })
     })
   }
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'getGrayscaleStatus' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError)
+          return
+        }
         setIsGrayscale(response.isGrayscale)
       })
     })
