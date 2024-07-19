@@ -28,6 +28,7 @@ export default defineManifest({
     {
       matches: ['<all_urls>'],
       js: ['src/contentScript/index.js'],
+      run_at: 'document_start'
     },
   ],
   side_panel: {
@@ -40,6 +41,9 @@ export default defineManifest({
     },
   ],
   permissions: ['sidePanel', 'storage', 'activeTab', 'tabs'],
+  host_permissions: [
+    '<all_urls>'
+  ],
   chrome_url_overrides: {
     newtab: 'newtab.html',
   },
