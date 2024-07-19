@@ -3,12 +3,17 @@ import './Popup.css'
 
 export const Popup = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
+  const [error, setError] = useState(null)
 
   const toggleGrayscale = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (chrome.runtime.lastError) {
+        setError(chrome.runtime.lastError.message)
+        return
+      }
       chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleGrayscale' }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError)
+          setError(chrome.runtime.lastError.message)
           return
         }
         if (response && response.isGrayscale !== undefined) {
@@ -20,9 +25,13 @@ export const Popup = () => {
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (chrome.runtime.lastError) {
+        setError(chrome.runtime.lastError.message)
+        return
+      }
       chrome.tabs.sendMessage(tabs[0].id, { action: 'getGrayscaleStatus' }, (response) => {
         if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError)
+          setError(chrome.runtime.lastError.message)
           return
         }
         if (response && response.isGrayscale !== undefined) {
@@ -38,6 +47,7 @@ export const Popup = () => {
       <button onClick={toggleGrayscale}>
         {isGrayscale ? 'Disable Grayscale' : 'Enable Grayscale'}
       </button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </main>
   )
 }

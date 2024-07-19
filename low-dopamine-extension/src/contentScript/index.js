@@ -30,7 +30,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else if (request.action === 'getGrayscaleStatus') {
         sendResponse({ isGrayscale: isGrayscale })
     }
-    return true
 })
 
 chrome.storage.local.get(['isGrayscale'], (result) => {
