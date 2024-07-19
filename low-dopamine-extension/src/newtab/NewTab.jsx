@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react'
 import './NewTab.css'
+const applyGrayscale = () => {
+  if (isGrayscale) {
+    document.documentElement.style.filter = 'grayscale(100%)';
+  } else if (isHalfGrayscale) {
+    document.documentElement.style.filter = 'grayscale(50%)';
+  } else {
+    document.documentElement.style.filter = 'none';
+  }
 
+};
 export const NewTab = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
   const [isHalfGrayscale, setIsHalfGrayscale] = useState(false)
   const [error, setError] = useState(null)
 
-  const sendMessageToContentScript = (action) => {
+   const sendMessageToContentScript = (action) => {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action }, (response) => {
         if (chrome.runtime.lastError) {
