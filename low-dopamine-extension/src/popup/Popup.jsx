@@ -5,40 +5,47 @@ export const Popup = () => {
   const [isGrayscale, setIsGrayscale] = useState(false)
   const [error, setError] = useState(null)
 
-  const toggleGrayscale = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (chrome.runtime.lastError) {
-        setError(chrome.runtime.lastError.message)
-        return
-      }
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleGrayscale' }, (response) => {
+  const sendMessageToContentScript = (action) => {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (chrome.runtime.lastError) {
-          setError(chrome.runtime.lastError.message)
+          reject(chrome.runtime.lastError.message)
           return
         }
-        if (response && response.isGrayscale !== undefined) {
-          setIsGrayscale(response.isGrayscale)
-        }
+        chrome.tabs.sendMessage(tabs[0].id, { action }, (response) => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError.message)
+            return
+          }
+          resolve(response)
+        })
       })
     })
   }
 
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (chrome.runtime.lastError) {
-        setError(chrome.runtime.lastError.message)
-        return
+  const toggleGrayscale = async () => {
+    try {
+      const response = await sendMessageToContentScript('toggleGrayscale')
+      if (response && response.isGrayscale !== undefined) {
+        setIsGrayscale(response.isGrayscale)
       }
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'getGrayscaleStatus' }, (response) => {
-        if (chrome.runtime.lastError) {
-          setError(chrome.runtime.lastError.message)
-          return
-        }
+    } catch (err) {
+      setError(err)
+    }
+  }
+
+  useEffect(() => {
+    const getInitialState = async () => {
+      try {
+        const response = await sendMessageToContentScript('getGrayscaleStatus')
         if (response && response.isGrayscale !== undefined) {
           setIsGrayscale(response.isGrayscale)
         }
-      })
-    })
+      } catch (err) {
+        setError(err)
+      }
+    }
+    getInitialState()
   }, [])
 
   return (
