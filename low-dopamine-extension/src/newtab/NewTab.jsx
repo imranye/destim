@@ -8,7 +8,7 @@ export const NewTab = () => {
   return (
     <section>
       <span></span>
-      <h1>lock in</h1>
+      <h1>🔒time to lock in 🔒</h1>
     </section>
   )
 }
