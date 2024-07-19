@@ -14,3 +14,4 @@ export const NewTab = () => {
 }
 
 export default NewTab
+
