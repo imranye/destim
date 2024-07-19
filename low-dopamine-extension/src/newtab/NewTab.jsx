@@ -8,46 +8,42 @@ export const NewTab = () => {
 
   const sendMessageToContentScript = (action) => {
     return new Promise((resolve, reject) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.runtime.sendMessage({ action }, (response) => {
         if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError.message)
-          return
+          reject(chrome.runtime.lastError.message);
+        } else {
+          resolve(response);
         }
-        chrome.tabs.sendMessage(tabs[0].id, { action }, (response) => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError.message)
-            return
-          }
-          resolve(response)
-        })
-      })
-    })
-  }
-
+      });
+    });
+  };
   const toggleGrayscale = async () => {
+    setIsGrayscale(!isGrayscale);
+    setIsHalfGrayscale(false);
+    applyGrayscale();
     try {
-      const response = await sendMessageToContentScript('toggleGrayscale')
-      if (response && response.isGrayscale !== undefined) {
-        setIsGrayscale(response.isGrayscale)
-        setIsHalfGrayscale(false)
-      }
+      await sendMessageToContentScript('toggleGrayscale');
     } catch (err) {
-      setError(err)
+      setError(err);
     }
-  }
-
+  };
+  
   const toggleHalfGrayscale = async () => {
+    setIsHalfGrayscale(!isHalfGrayscale);
+    setIsGrayscale(false);
+    applyGrayscale();
     try {
-      const response = await sendMessageToContentScript('toggleHalfGrayscale')
-      if (response && response.isHalfGrayscale !== undefined) {
-        setIsHalfGrayscale(response.isHalfGrayscale)
-        setIsGrayscale(false)
-      }
+      await sendMessageToContentScript('toggleHalfGrayscale');
     } catch (err) {
-      setError(err)
+      setError(err);
     }
-  }
+  };
 
+  useEffect(() => {
+    applyGrayscale();
+  }, [isGrayscale, isHalfGrayscale]);
+
+  
   useEffect(() => {
     const getInitialState = async () => {
       try {
